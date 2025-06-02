@@ -21,68 +21,92 @@ Create a `sptSet[]` array (shortest path tree set) to keep track of vertices who
 ## PYTHON PROGRAM
 
 ```
-from collections import defaultdict
+# Python program for Dijkstra's single source shortest path algorithm. 
+# The program is for adjacency matrix representation of the graph
 
-# This class represents a directed graph
-# using adjacency list representation
-class Graph:
+# Library for INT_MAX
+import sys
 
-	# Constructor
-	def __init__(self):
+class Graph():
 
-		# default dictionary to store graph
-		self.graph = defaultdict(list)
+	def __init__(self, vertices):
+		self.V = vertices
+		self.graph = [[0 for column in range(vertices)]
+					for row in range(vertices)]
 
-	# function to add an edge to graph
-	def addEdge(self,u,v):
-		self.graph[u].append(v)
+	def printSolution(self, dist):
+		print("Vertex   Distance from Source")
+		for node in range(self.V):
+			print(node, "           ", dist[node])
 
-	# Function to print a BFS of graph
-	def BFS(self, s):
+	# A utility function to find the vertex with
+	# minimum distance value, from the set of vertices
+	# not yet included in shortest path tree
+	def minDistance(self, dist, sptSet):
 
-		# Mark all the vertices as not visited
-		visited = [False] * (max(self.graph) + 1)
+		# Initialize minimum distance for next node
+		min = sys.maxsize
 
-		# Create a queue for BFS
-		queue = []
+		# Search not nearest vertex not in the
+		# shortest path tree
+		for u in range(self.V):
+			if dist[u] < min and sptSet[u] == False:
+				min = dist[u]
+				min_index = u
 
-		# Mark the source node as
-		# visited and enqueue it
-		queue.append(s)
-		visited[s] = True
+		return min_index
 
-		while queue:
-		    s=queue.pop(0)
-		    print(s,end=" ")
-		    
-		    for i in self.graph[s]:
-		        if visited[i]==False:
-		            queue.append(i)
-		            visited[i]=True
-		
-		
-		
-		
+	# Function that implements Dijkstra's single source
+	# shortest path algorithm for a graph represented
+	# using adjacency matrix representation
+	def dijkstra(self, src):
 
-# Create a graph given in
-# the above diagram
-n=int(input())
-g = Graph()
-g.addEdge(0, 1)
-g.addEdge(0, 2)
-g.addEdge(1, 2)
-g.addEdge(2, 0)
-g.addEdge(2, 3)
-g.addEdge(3, 3)
+		dist = [sys.maxsize] * self.V
+		dist[src] = 0
+		sptSet = [False] * self.V
 
-print ("Following is Breadth First Traversal"
-				" (starting from vertex {})".format(n))
-g.BFS(n)
+		for cout in range(self.V):
+
+			# Pick the minimum distance vertex from
+			# the set of vertices not yet processed.
+			# x is always equal to src in first iteration
+			x = self.minDistance(dist, sptSet)
+
+			# Put the minimum distance vertex in the
+			# shortest path tree
+			sptSet[x] = True
+
+			# Update dist value of the adjacent vertices
+			# of the picked vertex only if the current
+			# distance is greater than new distance and
+			# the vertex in not in the shortest path tree
+			for y in range(self.V):
+				if self.graph[x][y] > 0 and sptSet[y] == False and 				dist[y] > dist[x] + self.graph[x][y]:
+						dist[y] = dist[x] + self.graph[x][y]
+
+		self.printSolution(dist)
+
+# Driver program
+g = Graph(9)
+g.graph = [[0, 4, 0, 0, 0, 0, 0, 8, 0],
+		[4, 0, 8, 0, 0, 0, 0, 11, 0],
+		[0, 8, 0, 7, 0, 4, 0, 0, 2],
+		[0, 0, 7, 0, 9, 14, 0, 0, 0],
+		[0, 0, 0, 9, 0, 10, 0, 0, 0],
+		[0, 0, 4, 14, 10, 0, 2, 0, 0],
+		[0, 0, 0, 0, 0, 2, 0, 1, 6],
+		[8, 11, 0, 0, 0, 0, 1, 0, 7],
+		[0, 0, 2, 0, 0, 0, 6, 7, 0]
+		];
+
+g.dijkstra(0);
+
 
 ```
 
 ## OUTPUT
-![image](https://github.com/user-attachments/assets/15125527-a605-4490-ac54-a9faf27250da)
+![image](https://github.com/user-attachments/assets/21ffc8f2-b22c-478e-a41c-8d4dc501a129)
+
 
 ## RESULT
-Thus the python program was initialised and executed successfully.
+Thus the program for Dijkstra's single-source shortest path algorithm is executed Successfully.
